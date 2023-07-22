@@ -1,4 +1,4 @@
-import { Box, Container } from '@chakra-ui/react'
+import { Box } from '@chakra-ui/react'
 import Head from 'next/head'
 import { ReactNode } from 'react'
 
@@ -34,6 +34,8 @@ export function Layout({ children, title, description }: LayoutProps) {
           name="description"
           content={description ?? 'Will Mann Portfolio'}
         />
+        <meta name="theme-color" content="#192A56" />
+        <link rel="favicon" href="/favicon.png" />
       </Head>
 
       <Navbar />
