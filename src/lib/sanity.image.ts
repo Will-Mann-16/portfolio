@@ -1,5 +1,5 @@
 import createImageUrlBuilder from '@sanity/image-url'
-import type { Image } from 'sanity'
+import type { Image, ImageAsset } from 'sanity'
 
 import { dataset, projectId } from '~/lib/sanity.api'
 
@@ -15,4 +15,9 @@ export const urlForImage = (source: Image) => {
   }
 
   return imageBuilder?.image(source).auto('format')
+}
+
+export interface SanityImageType {
+  _type: 'image'
+  asset: ImageAsset
 }

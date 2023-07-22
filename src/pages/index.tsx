@@ -1,44 +1,90 @@
-import type { GetStaticProps, InferGetStaticPropsType } from 'next'
-import { useLiveQuery } from 'next-sanity/preview'
+import {
+  Badge,
+  Box,
+  Button,
+  Card,
+  CardBody,
+  Center,
+  CircularProgress,
+  CircularProgressLabel,
+  Container,
+  Flex,
+  Heading,
+  HStack,
+  Link,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  SimpleGrid,
+  Stack,
+  StackDivider,
+  Tag,
+  TagLabel,
+  TagLeftIcon,
+  Text,
+  Tooltip,
+  useDisclosure,
+} from '@chakra-ui/react'
+import { PortableText } from '@portabletext/react'
+import { GetStaticProps, InferGetStaticPropsType } from 'next'
+import Image from 'next/image'
+import NextLink from 'next/link'
 
-import Card from '~/components/Card'
-import Container from '~/components/Container'
-import Welcome from '~/components/Welcome'
-import { readToken } from '~/lib/sanity.api'
+import { About } from '~/components/home/About'
+import { Contact } from '~/components/home/Contact'
+import { Hero } from '~/components/home/Hero'
+import { Projects } from '~/components/home/Projects'
+import { Technologies } from '~/components/home/Technologies'
+import { Layout } from '~/components/Layout'
+import { MotionBox } from '~/components/Motion'
+import { getAboutPage, Page } from '~/lib/page.queries'
+import { getProjects, Project } from '~/lib/project.queries'
 import { getClient } from '~/lib/sanity.client'
-import { getPosts, type Post, postsQuery } from '~/lib/sanity.queries'
-import type { SharedPageProps } from '~/pages/_app'
+import { urlForImage } from '~/lib/sanity.image'
+import { getTechnologies, Technology } from '~/lib/technology.queries'
 
-export const getStaticProps: GetStaticProps<
-  SharedPageProps & {
-    posts: Post[]
+export default function IndexPage({
+  about,
+  projects,
+  technologies,
+}: InferGetStaticPropsType<typeof getStaticProps>) {
+  return (
+    <Layout>
+      <Hero />
+      <About about={about} />
+      <Projects projects={projects} />
+      <Technologies technologies={technologies} />
+      <Contact />
+    </Layout>
+  )
+}
+
+export const getStaticProps: GetStaticProps<{
+  about: Page
+  projects: Project[]
+  technologies: Technology[]
+}> = async () => {
+  const client = getClient()
+  const about = await getAboutPage(client)
+
+  if (!about) {
+    return {
+      notFound: true,
+    }
   }
-> = async ({ draftMode = false }) => {
-  const client = getClient(draftMode ? { token: readToken } : undefined)
-  const posts = await getPosts(client)
+
+  const projects = await getProjects(client)
+  const technologies = await getTechnologies(client)
 
   return {
     props: {
-      draftMode,
-      token: draftMode ? readToken : '',
-      posts,
+      about,
+      projects,
+      technologies,
     },
   }
-}
-
-export default function IndexPage(
-  props: InferGetStaticPropsType<typeof getStaticProps>
-) {
-  const [posts] = useLiveQuery<Post[]>(props.posts, postsQuery)
-  return (
-    <Container>
-      <section>
-        {posts.length ? (
-          posts.map((post) => <Card key={post._id} post={post} />)
-        ) : (
-          <Welcome />
-        )}
-      </section>
-    </Container>
-  )
 }

@@ -3,4 +3,5 @@ const config = {
   images: { remotePatterns: [{ hostname: 'cdn.sanity.io' }] },
 }
 
-export default config
+module.exports = config
+

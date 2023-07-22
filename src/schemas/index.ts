@@ -1,9 +1,14 @@
-import { SchemaTypeDefinition } from 'sanity'
-
 import blockContent from './blockContent'
-import post from './post'
+import blogPost from './blogPost'
+import page from './page'
+import project from './project'
+import technology from './technology'
 
-export const schemaTypes = [post, blockContent]
-export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [post, blockContent],
-}
+export const singletonActions = new Set([
+  'publish',
+  'discardChanges',
+  'restore',
+])
+export const singletonTypes = new Set(['page'])
+
+export const schemaTypes = [blogPost, blockContent, project, technology, page]

@@ -1,58 +1,13 @@
-import '~/styles/global.css'
-
-import { IBM_Plex_Mono, Inter, PT_Serif } from '@next/font/google'
+import { ChakraProvider } from '@chakra-ui/react'
 import type { AppProps } from 'next/app'
-import { lazy } from 'react'
+import Head from 'next/head'
 
-export interface SharedPageProps {
-  draftMode: boolean
-  token: string
-}
+import { theme } from '~/utils/theme'
 
-const PreviewProvider = lazy(() => import('~/components/PreviewProvider'))
-
-const mono = IBM_Plex_Mono({
-  variable: '--font-family-mono',
-  subsets: ['latin'],
-  weight: ['500', '700'],
-})
-
-const sans = Inter({
-  variable: '--font-family-sans',
-  subsets: ['latin'],
-  weight: ['500', '700', '800'],
-})
-
-const serif = PT_Serif({
-  variable: '--font-family-serif',
-  style: ['normal', 'italic'],
-  subsets: ['latin'],
-  weight: ['400', '700'],
-})
-
-export default function App({
-  Component,
-  pageProps,
-}: AppProps<SharedPageProps>) {
-  const { draftMode, token } = pageProps
+export default function App({ Component, pageProps }: AppProps) {
   return (
-    <>
-      <style jsx global>
-        {`
-          :root {
-            --font-family-sans: ${sans.style.fontFamily};
-            --font-family-serif: ${serif.style.fontFamily};
-            --font-family-mono: ${mono.style.fontFamily};
-          }
-        `}
-      </style>
-      {draftMode ? (
-        <PreviewProvider token={token}>
-          <Component {...pageProps} />
-        </PreviewProvider>
-      ) : (
-        <Component {...pageProps} />
-      )}
-    </>
+    <ChakraProvider theme={theme}>
+      <Component {...pageProps} />
+    </ChakraProvider>
   )
 }

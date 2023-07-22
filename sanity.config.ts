@@ -13,19 +13,41 @@ import {
   previewSecretId,
   projectId,
 } from '~/lib/sanity.api'
-import { schema } from '~/schemas'
+import { schemaTypes, singletonActions, singletonTypes } from '~/schemas'
 import { productionUrl } from '~/utils/productionUrl'
 
 export default defineConfig({
   basePath: '/studio',
-  name: 'project-name',
-  title: 'Project Name',
+  name: 'willmann-portfolio',
+  title: 'Will Mann Portfolio',
   projectId,
   dataset,
   //edit schemas in './src/schemas'
-  schema,
+  schema: {
+    types: schemaTypes,
+    templates: (templates) =>
+      templates.filter(({ schemaType }) => !singletonTypes.has(schemaType)),
+  },
+  document: {
+    actions: (input, context) =>
+      singletonTypes.has(context.schemaType)
+        ? input.filter(({ action }) => action && singletonActions.has(action))
+        : input,
+  },
   plugins: [
-    deskTool(),
+    deskTool({
+      structure: (S) =>
+        S.list()
+          .title('Content')
+          .items([
+            S.listItem()
+              .title('Pages')
+              .child(S.document().schemaType('page').documentId('about')),
+            S.documentTypeListItem('blogPost').title('Blog posts'),
+            S.documentTypeListItem('project').title('Projects'),
+            S.documentTypeListItem('technology').title('Technologies'),
+          ]),
+    }),
     // Vision lets you query your content with GROQ in the studio
     // https://www.sanity.io/docs/the-vision-plugin
     visionTool({ defaultApiVersion: apiVersion }),

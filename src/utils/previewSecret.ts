@@ -1,6 +1,5 @@
 import { groq, type SanityClient } from 'next-sanity'
-
-import { createRandomUUID } from './uuid'
+import { v4 as uuid } from 'uuid'
 
 // updated within the hour, if it's older it'll create a new secret or return null
 const query = (ttl: number) => groq`
@@ -25,8 +24,7 @@ export async function getPreviewSecret(options: {
   const secret = await client.fetch<string | null>(query(ttl), { id })
 
   if (!secret && createIfNotExists) {
-    const newSecret =
-      createIfNotExists === true ? createRandomUUID() : createIfNotExists()
+    const newSecret = createIfNotExists === true ? uuid() : createIfNotExists()
 
     try {
       const patch = client.patch(id).set({ secret: newSecret })
