@@ -4,13 +4,11 @@ export type ContentImage = {
   src: string
   width: number
   height: number
-  blurDataURL: string
 }
 
 type ImageMeta = {
   width: number
   height: number
-  blur: string
 }
 
 export function publicImage(relFromImages: string): ContentImage {
@@ -23,7 +21,6 @@ export function publicImage(relFromImages: string): ContentImage {
     src,
     width: meta.width,
     height: meta.height,
-    blurDataURL: meta.blur,
   }
 }
 

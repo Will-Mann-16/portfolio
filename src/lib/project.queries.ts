@@ -1,6 +1,10 @@
-import { listContentFiles, readContentFile } from '~/lib/contentDir'
+import {
+  byDateDesc,
+  listSlugs,
+  missingFile,
+  readMarkdown,
+} from '~/lib/contentDir'
 import { ContentImage, publicImage } from '~/lib/contentImage'
-import { parseMarkdownFile } from '~/lib/parseMarkdownFile'
 import { getTechnologiesById, Technology } from '~/lib/technology.queries'
 
 export interface Project {
@@ -14,7 +18,7 @@ export interface Project {
 }
 
 function loadProject(slug: string): Project {
-  const parsed = parseMarkdownFile(readContentFile('projects', `${slug}.md`))
+  const parsed = readMarkdown('projects', `${slug}.md`)
   const byId = getTechnologiesById()
   const ids = (parsed.data.technologies as string[]) || []
   return {
@@ -35,27 +39,13 @@ function loadProject(slug: string): Project {
 }
 
 export function getProjectSlugs(): string[] {
-  return listContentFiles('projects', '.md').map((name) => name.replace(/\.md$/, ''))
+  return listSlugs('projects')
 }
 
 export function getProjects(): Project[] {
-  return getProjectSlugs()
-    .map(loadProject)
-    .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
+  return getProjectSlugs().map(loadProject).sort(byDateDesc)
 }
 
 export function getProject(slug: string): Project | null {
-  try {
-    return loadProject(slug)
-  } catch (err) {
-    if (
-      typeof err === 'object' &&
-      err !== null &&
-      'code' in err &&
-      (err as { code: string }).code === 'ENOENT'
-    ) {
-      return null
-    }
-    throw err
-  }
+  return missingFile(() => loadProject(slug))
 }

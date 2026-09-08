@@ -65,28 +65,3 @@ export function MarkdownBody({
 
   return <>{nodes}</>
 }
-
-export function ContactMarkdown({ markdown }: { markdown: string }) {
-  return (
-    <ReactMarkdown
-      components={{
-        p: ({ children }) => <Text color="brand.900">{children}</Text>,
-        a: ({ href, children }) => {
-          const external = href?.startsWith('http')
-          return (
-            <Link
-              href={href}
-              color="blue.700"
-              isExternal={external}
-              rel={external ? 'noopener noreferrer' : undefined}
-            >
-              {children}
-            </Link>
-          )
-        },
-      }}
-    >
-      {markdown}
-    </ReactMarkdown>
-  )
-}

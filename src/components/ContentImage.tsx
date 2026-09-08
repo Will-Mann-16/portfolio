@@ -17,16 +17,7 @@ export function ContentImage({ src, alt, fill, ...props }: ContentImageProps) {
     return <ChakraImage src={src} alt={alt} />
   }
   if (fill) {
-    return (
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        placeholder="blur"
-        blurDataURL={meta.blur}
-        {...props}
-      />
-    )
+    return <Image src={src} alt={alt} fill {...props} />
   }
   return (
     <Image
@@ -34,8 +25,6 @@ export function ContentImage({ src, alt, fill, ...props }: ContentImageProps) {
       alt={alt}
       width={meta.width}
       height={meta.height}
-      placeholder="blur"
-      blurDataURL={meta.blur}
       {...props}
     />
   )
@@ -54,14 +43,7 @@ export function BodyImage({ src, alt }: { src: string; alt: string }) {
         overflow="hidden"
         aspectRatio={`${width} / ${height}`}
       >
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          style={{ objectFit: 'contain' }}
-          placeholder={meta ? 'blur' : undefined}
-          blurDataURL={meta?.blur}
-        />
+        <Image src={src} alt={alt} fill style={{ objectFit: 'contain' }} />
       </Box>
     </Stack>
   )

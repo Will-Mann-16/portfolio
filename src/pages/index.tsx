@@ -33,17 +33,9 @@ export const getStaticProps: GetStaticProps<{
   projects: Project[]
   technologies: Technology[]
 }> = async () => {
-  const about = getAboutPage()
-
-  if (!about) {
-    return {
-      notFound: true,
-    }
-  }
-
   return {
     props: {
-      about,
+      about: getAboutPage(),
       contact: getContact(),
       projects: getProjects(),
       technologies: getTechnologies(),

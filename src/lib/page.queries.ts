@@ -1,5 +1,4 @@
-import { readContentFile } from '~/lib/contentDir'
-import { parseMarkdownFile } from '~/lib/parseMarkdownFile'
+import { readContentFile, readMarkdown } from '~/lib/contentDir'
 
 export interface Page {
   title: string
@@ -7,7 +6,7 @@ export interface Page {
 }
 
 export function getAboutPage(): Page {
-  const parsed = parseMarkdownFile(readContentFile('about.md'))
+  const parsed = readMarkdown('about.md')
   return {
     title: parsed.data.title,
     body: parsed.content.trim(),

@@ -33,7 +33,6 @@
     "react-markdown": "^10.1.0"
   },
   "devDependencies": {
-    "@next/env": "^13.4.10",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^26.5.0",
     "@types/react": "18.2.14",

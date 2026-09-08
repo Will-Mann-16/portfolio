@@ -48,9 +48,6 @@ importers:
         specifier: ^10.1.0
         version: 10.1.0(@types/react@18.2.14)(react@18.3.1)
     devDependencies:
-      '@next/env':
-        specifier: ^13.4.10
-        version: 13.5.11
       '@types/js-yaml':
         specifier: ^4.0.9
         version: 4.0.9
@@ -735,9 +732,6 @@ packages:
 
   '@next/env@13.4.9':
     resolution: {integrity: sha512-vuDRK05BOKfmoBYLNi2cujG2jrYbEod/ubSSyqgmEx9n/W3eZaJQdRNhTfumO+qmq/QTzLurW487n/PM/fHOkw==}
-
-  '@next/env@13.5.11':
-    resolution: {integrity: sha512-fbb2C7HChgM7CemdCY+y3N1n8pcTKdqtQLbC7/EQtPdLvlMUT9JX/dBYl8MMZAtYG4uVMyPFHXckb68q/NRwqg==}
 
   '@next/eslint-plugin-next@13.4.9':
     resolution: {integrity: sha512-nDtGpa992tNyAkT/KmSMy7QkHfNZmGCBYhHtafU97DubqxzNdvLsqRtliQ4FU04CysRCtvP2hg8rRC1sAKUTUA==}
@@ -3581,8 +3575,6 @@ snapshots:
     optional: true
 
   '@next/env@13.4.9': {}
-
-  '@next/env@13.5.11': {}
 
   '@next/eslint-plugin-next@13.4.9':
     dependencies:

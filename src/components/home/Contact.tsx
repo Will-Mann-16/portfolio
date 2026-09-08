@@ -1,6 +1,5 @@
-import { Box, Container, Heading, Stack } from '@chakra-ui/react'
-
-import { ContactMarkdown } from '~/components/MarkdownBody'
+import { Box, Container, Heading, Link, Stack, Text } from '@chakra-ui/react'
+import ReactMarkdown from 'react-markdown'
 
 interface ContactProps {
   body: string
@@ -15,7 +14,26 @@ export function Contact({ body }: ContactProps) {
             <Heading as="h2" fontSize="4xl" color="brand.900">
               Contact
             </Heading>
-            <ContactMarkdown markdown={body} />
+            <ReactMarkdown
+              components={{
+                p: ({ children }) => <Text color="brand.900">{children}</Text>,
+                a: ({ href, children }) => {
+                  const external = href?.startsWith('http')
+                  return (
+                    <Link
+                      href={href}
+                      color="blue.700"
+                      isExternal={external}
+                      rel={external ? 'noopener noreferrer' : undefined}
+                    >
+                      {children}
+                    </Link>
+                  )
+                },
+              }}
+            >
+              {body}
+            </ReactMarkdown>
           </Stack>
         </Stack>
       </Container>

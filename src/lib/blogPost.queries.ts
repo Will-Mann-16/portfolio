@@ -1,6 +1,10 @@
-import { listContentFiles, readContentFile } from '~/lib/contentDir'
+import {
+  byDateDesc,
+  listSlugs,
+  missingFile,
+  readMarkdown,
+} from '~/lib/contentDir'
 import { ContentImage, publicImage } from '~/lib/contentImage'
-import { parseMarkdownFile } from '~/lib/parseMarkdownFile'
 
 export interface BlogPost {
   slug: string
@@ -12,7 +16,7 @@ export interface BlogPost {
 }
 
 function loadPost(slug: string): BlogPost {
-  const parsed = parseMarkdownFile(readContentFile('blog', `${slug}.md`))
+  const parsed = readMarkdown('blog', `${slug}.md`)
   return {
     slug,
     title: parsed.data.title,
@@ -24,27 +28,13 @@ function loadPost(slug: string): BlogPost {
 }
 
 export function getPostSlugs(): string[] {
-  return listContentFiles('blog', '.md').map((name) => name.replace(/\.md$/, ''))
+  return listSlugs('blog')
 }
 
 export function getBlogPosts(): BlogPost[] {
-  return getPostSlugs()
-    .map(loadPost)
-    .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
+  return getPostSlugs().map(loadPost).sort(byDateDesc)
 }
 
 export function getBlogPost(slug: string): BlogPost | null {
-  try {
-    return loadPost(slug)
-  } catch (err) {
-    if (
-      typeof err === 'object' &&
-      err !== null &&
-      'code' in err &&
-      (err as { code: string }).code === 'ENOENT'
-    ) {
-      return null
-    }
-    throw err
-  }
+  return missingFile(() => loadPost(slug))
 }

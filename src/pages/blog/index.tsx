@@ -69,20 +69,16 @@ export default function Blog({
                     bg: 'brand.600',
                   }}
                 >
-                  {post.mainImage ? (
-                    <ContentImage
-                      src={post.mainImage.src}
-                      alt={post.title}
-                      style={{
-                        width: '160px',
-                        height: '90px',
-                        objectFit: 'contain',
-                        borderRadius: '0.5rem',
-                      }}
-                    />
-                  ) : (
-                    <Box height={160} width={90} />
-                  )}
+                  <ContentImage
+                    src={post.mainImage.src}
+                    alt={post.title}
+                    style={{
+                      width: '160px',
+                      height: '90px',
+                      objectFit: 'contain',
+                      borderRadius: '0.5rem',
+                    }}
+                  />
                   <Stack>
                     <HStack alignItems="stretch" justifyContent="space-between">
                       <Heading

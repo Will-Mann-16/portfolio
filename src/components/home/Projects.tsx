@@ -54,20 +54,16 @@ export function Projects({ projects }: ProjectsProps) {
                   bg: 'brand.600',
                 }}
               >
-                {project.mainImage ? (
-                  <ContentImage
-                    src={project.mainImage.src}
-                    alt={project.title}
-                    style={{
-                      height: '90px',
-                      width: '160px',
-                      objectFit: 'contain',
-                      borderRadius: '0.5rem',
-                    }}
-                  />
-                ) : (
-                  <Box height={160} width={90} />
-                )}
+                <ContentImage
+                  src={project.mainImage.src}
+                  alt={project.title}
+                  style={{
+                    height: '90px',
+                    width: '160px',
+                    objectFit: 'contain',
+                    borderRadius: '0.5rem',
+                  }}
+                />
                 <Stack>
                   <HStack alignItems="stretch">
                     <Heading
