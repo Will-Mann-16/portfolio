@@ -1,8 +1,6 @@
 import {
   Box,
   Button,
-  CircularProgress,
-  CircularProgressLabel,
   Container,
   Heading,
   HStack,
@@ -17,15 +15,11 @@ import {
   SimpleGrid,
   Stack,
   Text,
-  Tooltip,
   useDisclosure,
 } from '@chakra-ui/react'
-import Image from 'next/image'
 
-import { urlForImage } from '~/lib/sanity.image'
-import { Technology } from '~/lib/technology.queries'
-
-import { SanityImage } from '../SanityImage'
+import { ContentImage } from '~/components/ContentImage'
+import type { Technology } from '~/lib/technology.queries'
 
 interface TechnologiesProps {
   technologies: Technology[]
@@ -41,13 +35,11 @@ export function Technologies({ technologies }: TechnologiesProps) {
               Technologies
             </Heading>
             <Text color="brand.100">
-              Here are some of the technologies I&apos;ve worked with recently.
-              I&apos;m always learning new things, so this list is always
-              growing. Click a technology to find out more.
+              These are the tools I work with most. Click one for a short note.
             </Text>
             <SimpleGrid minChildWidth={200} spacing={4} w="full">
               {technologies.map((technology) => (
-                <TechnologyCard technology={technology} key={technology._id} />
+                <TechnologyCard technology={technology} key={technology.id} />
               ))}
             </SimpleGrid>
           </Stack>
@@ -80,8 +72,8 @@ function TechnologyCard({ technology }: TechnologyCardProps) {
         p={3}
       >
         <Box height={65} width={65} position="relative">
-          <SanityImage
-            image={technology.logo}
+          <ContentImage
+            src={technology.logo.src}
             alt={technology.title}
             fill
             style={{ objectFit: 'contain' }}
@@ -90,17 +82,6 @@ function TechnologyCard({ technology }: TechnologyCardProps) {
         <Heading as="h3" flex={1} fontSize="2xl" color="brand.600">
           {technology.title}
         </Heading>
-        <Tooltip label="Proficiency">
-          <CircularProgress value={technology.proficiency} color="green.600">
-            <CircularProgressLabel
-              fontSize="sm"
-              color="green.800"
-              fontWeight="bold"
-            >
-              {technology.proficiency}%
-            </CircularProgressLabel>
-          </CircularProgress>
-        </Tooltip>
       </HStack>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -108,8 +89,8 @@ function TechnologyCard({ technology }: TechnologyCardProps) {
           <ModalHeader>
             <HStack>
               <Box height={65} width={65} position="relative">
-                <SanityImage
-                  image={technology.logo}
+                <ContentImage
+                  src={technology.logo.src}
                   alt={technology.title}
                   fill
                   style={{ objectFit: 'contain' }}
@@ -118,16 +99,6 @@ function TechnologyCard({ technology }: TechnologyCardProps) {
               <Heading as="h3" fontSize="2xl" color="brand.100">
                 {technology.title}
               </Heading>
-              <Tooltip label="Proficiency">
-                <CircularProgress
-                  value={technology.proficiency}
-                  color="green.400"
-                >
-                  <CircularProgressLabel fontSize="sm" color="green.200">
-                    {technology.proficiency}%
-                  </CircularProgressLabel>
-                </CircularProgress>
-              </Tooltip>
             </HStack>
             <ModalCloseButton color="brand.100" />
           </ModalHeader>

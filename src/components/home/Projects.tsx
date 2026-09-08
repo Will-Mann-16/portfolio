@@ -9,13 +9,10 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/react'
-import Image from 'next/image'
 import Link from 'next/link'
 
-import { Project } from '~/lib/project.queries'
-import { urlForImage } from '~/lib/sanity.image'
-
-import { SanityImage } from '../SanityImage'
+import { ContentImage } from '~/components/ContentImage'
+import type { Project } from '~/lib/project.queries'
 
 interface ProjectsProps {
   projects: Project[]
@@ -31,8 +28,8 @@ export function Projects({ projects }: ProjectsProps) {
               Projects
             </Heading>
             <Text color="brand.100">
-              Here are some of the projects I&apos;ve worked on recently, with
-              their respective technologies. Click a project to find out more.
+              Side projects from school and university. Click one to find out
+              more.
             </Text>
           </Stack>
           <Stack
@@ -46,8 +43,8 @@ export function Projects({ projects }: ProjectsProps) {
                 flexDir={{ base: 'column', md: 'row' }}
                 alignItems="center"
                 as={Link}
-                href={`/projects/${project.slug.current}`}
-                key={project._id}
+                href={`/projects/${project.slug}`}
+                key={project.slug}
                 cursor="pointer"
                 transitionDuration="0.3s"
                 rounded="md"
@@ -58,8 +55,8 @@ export function Projects({ projects }: ProjectsProps) {
                 }}
               >
                 {project.mainImage ? (
-                  <SanityImage
-                    image={project.mainImage}
+                  <ContentImage
+                    src={project.mainImage.src}
                     alt={project.title}
                     style={{
                       height: '90px',
@@ -82,10 +79,10 @@ export function Projects({ projects }: ProjectsProps) {
                       {project.title}
                     </Heading>
                     {project.technologies?.map((technology) => (
-                      <Tooltip label={technology.title} key={technology._id}>
+                      <Tooltip label={technology.title} key={technology.id}>
                         <Tag p={1} bg="brand.500">
-                          <SanityImage
-                            image={technology.icon}
+                          <ContentImage
+                            src={technology.icon.src}
                             alt={technology.title}
                             style={{
                               height: '25px',

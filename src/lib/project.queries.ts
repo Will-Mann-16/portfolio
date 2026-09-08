@@ -1,92 +1,61 @@
-import type { PortableTextBlock } from '@portabletext/types'
-import type { ImageAsset, Slug } from '@sanity/types'
-import groq from 'groq'
-import { type SanityClient } from 'next-sanity'
-
-import { SanityImageType } from './sanity.image'
-import { Technology } from './technology.queries'
-
-export const projectsQuery = groq`*[_type == "project" && defined(slug.current)] | order(_createdAt desc) {
-    ...,
-    technologies[]-> {
-        ...,
-        logo {
-            ...,
-            asset-> {
-                ...,
-                metadata
-            }
-        },
-        icon {
-            ...,
-            asset-> {
-                ...,
-                metadata
-            }
-        }
-    },
-    mainImage {
-        ...,
-        asset-> {
-            ...,
-            metadata
-        }
-    }
-}`
-
-export async function getProjects(client: SanityClient): Promise<Project[]> {
-  return await client.fetch(projectsQuery)
-}
-
-export const projectBySlugQuery = groq`*[_type == "project" && slug.current == $slug][0] {
-    ...,
-    technologies[]-> {
-        ...,
-        logo {
-            ...,
-            asset-> {
-                ...,
-                metadata
-            }
-        },
-        icon {
-            ...,
-            asset-> {
-                ...,
-                metadata
-            }
-        }
-    },
-    mainImage {
-        ...,
-        asset-> {
-            ...,
-            metadata
-        }
-    },
-}`
-
-export async function getProject(
-  client: SanityClient,
-  slug: string
-): Promise<Project> {
-  return await client.fetch(projectBySlugQuery, {
-    slug,
-  })
-}
-
-export const projectSlugsQuery = groq`
-*[_type == "project" && defined(slug.current)][].slug.current
-`
+import { listContentFiles, readContentFile } from '~/lib/contentDir'
+import { ContentImage, publicImage } from '~/lib/contentImage'
+import { parseMarkdownFile } from '~/lib/parseMarkdownFile'
+import { getTechnologiesById, Technology } from '~/lib/technology.queries'
 
 export interface Project {
-  _type: 'project'
-  _id: string
-  _createdAt: string
-  title?: string
-  slug: Slug
-  excerpt?: string
-  mainImage?: SanityImageType
-  body: PortableTextBlock[]
+  slug: string
+  title: string
+  date: string
+  excerpt: string
+  body: string
+  mainImage: ContentImage
   technologies: Technology[]
+}
+
+function loadProject(slug: string): Project {
+  const parsed = parseMarkdownFile(readContentFile('projects', `${slug}.md`))
+  const byId = getTechnologiesById()
+  const ids = (parsed.data.technologies as string[]) || []
+  return {
+    slug,
+    title: parsed.data.title,
+    date: String(parsed.data.date),
+    excerpt: parsed.data.excerpt,
+    body: parsed.content.trim(),
+    mainImage: publicImage(`projects/${slug}/main.png`),
+    technologies: ids.map((id) => {
+      const tech = byId[id]
+      if (!tech) {
+        throw new Error(`Unknown technology id ${id} on project ${slug}`)
+      }
+      return tech
+    }),
+  }
+}
+
+export function getProjectSlugs(): string[] {
+  return listContentFiles('projects', '.md').map((name) => name.replace(/\.md$/, ''))
+}
+
+export function getProjects(): Project[] {
+  return getProjectSlugs()
+    .map(loadProject)
+    .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
+}
+
+export function getProject(slug: string): Project | null {
+  try {
+    return loadProject(slug)
+  } catch (err) {
+    if (
+      typeof err === 'object' &&
+      err !== null &&
+      'code' in err &&
+      (err as { code: string }).code === 'ENOENT'
+    ) {
+      return null
+    }
+    throw err
+  }
 }

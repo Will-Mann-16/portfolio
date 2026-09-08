@@ -62,8 +62,7 @@ export function Footer() {
       </HStack>
       <Flex mt={4} align="center" justify="center">
         <Text fontSize="sm" color="white">
-          Will Mann is a computing graduate who developed this portfolio as a
-          showcase of his skills.
+          Will Mann is a Senior Software Engineer.
         </Text>
       </Flex>
     </Flex>

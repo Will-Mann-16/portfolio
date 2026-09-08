@@ -1,19 +1,19 @@
-import type { PortableTextBlock } from '@portabletext/types'
-import type { ImageAsset, Slug } from '@sanity/types'
-import groq from 'groq'
-import { type SanityClient } from 'next-sanity'
-
-export const aboutPageQuery = groq`*[_type == "page" && slug.current == "about"][0]`
-
-export async function getAboutPage(client: SanityClient): Promise<Page> {
-  return await client.fetch(aboutPageQuery)
-}
+import { readContentFile } from '~/lib/contentDir'
+import { parseMarkdownFile } from '~/lib/parseMarkdownFile'
 
 export interface Page {
-  _type: 'page'
-  _id: string
-  _createdAt: string
-  title?: string
-  slug: Slug
-  body: PortableTextBlock[]
+  title: string
+  body: string
+}
+
+export function getAboutPage(): Page {
+  const parsed = parseMarkdownFile(readContentFile('about.md'))
+  return {
+    title: parsed.data.title,
+    body: parsed.content.trim(),
+  }
+}
+
+export function getContact(): string {
+  return readContentFile('contact.md').trim()
 }

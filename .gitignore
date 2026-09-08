@@ -15,6 +15,9 @@
 /.next/
 /out/
 
+# copied from content/images at build
+/public/images/
+
 # production
 /build
 /studio/dist
@@ -46,3 +49,6 @@ yarn-error.log*
 # Env files created by scripts for working locally
 .env
 studio/.env.development
+
+# local planning maps and research notes
+.scratch/

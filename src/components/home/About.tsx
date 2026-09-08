@@ -1,7 +1,7 @@
 import { Box, Container, Heading, Stack } from '@chakra-ui/react'
-import { PortableText } from '@portabletext/react'
 
-import { Page } from '~/lib/page.queries'
+import { MarkdownBody } from '~/components/MarkdownBody'
+import type { Page } from '~/lib/page.queries'
 
 interface AboutProps {
   about: Page
@@ -16,7 +16,7 @@ export function About({ about }: AboutProps) {
             {about.title}
           </Heading>
           <Stack color="brand.900">
-            <PortableText value={about.body} />
+            <MarkdownBody markdown={about.body} captionColor="brand.900" />
           </Stack>
         </Stack>
       </Container>

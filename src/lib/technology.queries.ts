@@ -1,42 +1,50 @@
-import type { PortableTextBlock } from '@portabletext/types'
-import type { ImageAsset, Slug } from '@sanity/types'
-import groq from 'groq'
-import { type SanityClient } from 'next-sanity'
+import fs from 'fs'
+import yaml from 'js-yaml'
+import path from 'path'
 
-import { SanityImageType } from './sanity.image'
-
-export const technologiesQuery = groq`*[_type == "technology"] | order(proficiency desc) {
-    ...,
-    logo {
-        ...,
-        asset-> {
-            ...,
-            metadata
-        }
-    },
-    icon {
-        ...,
-        asset-> {
-            ...,
-            metadata
-        }
-    }
-}`
-
-export async function getTechnologies(
-  client: SanityClient
-): Promise<Technology[]> {
-  return await client.fetch(technologiesQuery)
-}
+import { contentDir } from '~/lib/contentDir'
+import { ContentImage, publicImage } from '~/lib/contentImage'
 
 export interface Technology {
-  _type: 'technology'
-  _id: string
-  _createdAt: string
-  title?: string
-  link?: string
-  description?: string
-  logo?: SanityImageType
-  icon?: SanityImageType
-  proficiency?: number
+  id: string
+  title: string
+  link: string
+  description: string
+  logo: ContentImage
+  icon: ContentImage
+}
+
+type TechnologyFile = {
+  id: string
+  title: string
+  link: string
+  description: string
+}
+
+function techImages(id: string): { logo: ContentImage; icon: ContentImage } {
+  const shared = path.join(contentDir, 'images', 'technologies', `${id}.png`)
+  if (fs.existsSync(shared)) {
+    const img = publicImage(`technologies/${id}.png`)
+    return { logo: img, icon: img }
+  }
+  return {
+    logo: publicImage(`technologies/${id}-logo.png`),
+    icon: publicImage(`technologies/${id}-icon.png`),
+  }
+}
+
+export function getTechnologies(): Technology[] {
+  const raw = fs.readFileSync(
+    path.join(contentDir, 'technologies.yaml'),
+    'utf8'
+  )
+  const rows = yaml.load(raw) as TechnologyFile[]
+  return rows.map((row) => ({
+    ...row,
+    ...techImages(row.id),
+  }))
+}
+
+export function getTechnologiesById(): Record<string, Technology> {
+  return Object.fromEntries(getTechnologies().map((t) => [t.id, t]))
 }

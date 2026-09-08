@@ -1,0 +1,36 @@
+- id: typescript
+  title: TypeScript
+  link: "https://www.typescriptlang.org/"
+  description: "TypeScript is the language I write most days, across the Runna app and platform services."
+- id: reactnative
+  title: React Native
+  link: "https://reactnative.dev/"
+  description: "React Native is how we ship the Runna app. Most of my product work lives here."
+- id: aws
+  title: AWS
+  link: "https://aws.amazon.com/"
+  description: "AWS is the cloud I work on now. App infrastructure sits here: DynamoDB, Lambda, ECS, with Terraform for the bits we define as code."
+- id: graphql
+  title: GraphQL
+  link: "https://graphql.org/"
+  description: "GraphQL is how the app talks to our services, on the client and the API."
+- id: go
+  title: Go
+  link: "https://go.dev/"
+  description: "I used Go heavily at PwC for services. I still reach for it; TypeScript is what I write most days."
+- id: react
+  title: React
+  link: "https://react.dev/"
+  description: "React is how I build UI, on the web and underneath React Native."
+- id: nodejs
+  title: Node.js
+  link: "https://nodejs.org/en"
+  description: "Node is the runtime for our TypeScript services, including Nest.js on ECS."
+- id: expo
+  title: Expo
+  link: "https://expo.dev/"
+  description: "Expo is how we ship React Native, including over-the-air updates."
+- id: nextjs
+  title: Next.js
+  link: "https://www.nextjs.org"
+  description: "This site runs on Next.js. It is not the stack I write at work most days."

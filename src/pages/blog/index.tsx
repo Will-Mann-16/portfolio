@@ -8,14 +8,11 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 
+import { ContentImage } from '~/components/ContentImage'
 import { Layout } from '~/components/Layout'
-import { SanityImage } from '~/components/SanityImage'
 import { BlogPost, getBlogPosts } from '~/lib/blogPost.queries'
-import { getClient } from '~/lib/sanity.client'
-import { urlForImage } from '~/lib/sanity.image'
 import { formatDate } from '~/utils'
 
 import bg from '../../assets/bg.svg'
@@ -47,8 +44,7 @@ export default function Blog({
                 Blog
               </Heading>
               <Text color="brand.100">
-                Here are some of the blog posts I&apos;ve written recently.
-                Click a post to find out more.
+                Posts from this site. Click one to find out more.
               </Text>
             </Stack>
             <Stack
@@ -62,8 +58,8 @@ export default function Blog({
                   flexDir={{ base: 'column', md: 'row' }}
                   alignItems="center"
                   as={Link}
-                  href={`/blog/${post.slug.current}`}
-                  key={post._id}
+                  href={`/blog/${post.slug}`}
+                  key={post.slug}
                   cursor="pointer"
                   transitionDuration="0.3s"
                   rounded="md"
@@ -74,8 +70,8 @@ export default function Blog({
                   }}
                 >
                   {post.mainImage ? (
-                    <SanityImage
-                      image={post.mainImage}
+                    <ContentImage
+                      src={post.mainImage.src}
                       alt={post.title}
                       style={{
                         width: '160px',
@@ -105,7 +101,7 @@ export default function Blog({
                         pt={3}
                         color="brand.300"
                       >
-                        {formatDate(post._createdAt)}
+                        {formatDate(post.date)}
                       </Heading>
                     </HStack>
                     <Text>{post.excerpt}</Text>
@@ -123,12 +119,9 @@ export default function Blog({
 export const getStaticProps: GetStaticProps<{
   blogPosts: BlogPost[]
 }> = async () => {
-  const client = getClient()
-  const blogPosts = await getBlogPosts(client)
-
   return {
     props: {
-      blogPosts,
+      blogPosts: getBlogPosts(),
     },
   }
 }

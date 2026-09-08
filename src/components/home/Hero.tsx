@@ -86,7 +86,7 @@ export function Hero() {
             color="gray.400"
             fontSize={{ base: '1.5rem', md: '2rem' }}
           >
-            And I&apos;m a software engineer
+            And I&apos;m a Senior Software Engineer
           </Heading>
         </MotionBox>
       </MotionBox>

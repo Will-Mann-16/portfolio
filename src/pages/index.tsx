@@ -1,38 +1,4 @@
-import {
-  Badge,
-  Box,
-  Button,
-  Card,
-  CardBody,
-  Center,
-  CircularProgress,
-  CircularProgressLabel,
-  Container,
-  Flex,
-  Heading,
-  HStack,
-  Link,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  SimpleGrid,
-  Stack,
-  StackDivider,
-  Tag,
-  TagLabel,
-  TagLeftIcon,
-  Text,
-  Tooltip,
-  useDisclosure,
-} from '@chakra-ui/react'
-import { PortableText } from '@portabletext/react'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
-import Image from 'next/image'
-import NextLink from 'next/link'
 
 import { About } from '~/components/home/About'
 import { Contact } from '~/components/home/Contact'
@@ -40,15 +6,13 @@ import { Hero } from '~/components/home/Hero'
 import { Projects } from '~/components/home/Projects'
 import { Technologies } from '~/components/home/Technologies'
 import { Layout } from '~/components/Layout'
-import { MotionBox } from '~/components/Motion'
-import { getAboutPage, Page } from '~/lib/page.queries'
-import { getProjects, Project } from '~/lib/project.queries'
-import { getClient } from '~/lib/sanity.client'
-import { urlForImage } from '~/lib/sanity.image'
-import { getTechnologies, Technology } from '~/lib/technology.queries'
+import { getAboutPage, getContact, type Page } from '~/lib/page.queries'
+import { getProjects, type Project } from '~/lib/project.queries'
+import { getTechnologies, type Technology } from '~/lib/technology.queries'
 
 export default function IndexPage({
   about,
+  contact,
   projects,
   technologies,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
@@ -58,18 +22,18 @@ export default function IndexPage({
       <About about={about} />
       <Projects projects={projects} />
       <Technologies technologies={technologies} />
-      <Contact />
+      <Contact body={contact} />
     </Layout>
   )
 }
 
 export const getStaticProps: GetStaticProps<{
   about: Page
+  contact: string
   projects: Project[]
   technologies: Technology[]
 }> = async () => {
-  const client = getClient()
-  const about = await getAboutPage(client)
+  const about = getAboutPage()
 
   if (!about) {
     return {
@@ -77,14 +41,12 @@ export const getStaticProps: GetStaticProps<{
     }
   }
 
-  const projects = await getProjects(client)
-  const technologies = await getTechnologies(client)
-
   return {
     props: {
       about,
-      projects,
-      technologies,
+      contact: getContact(),
+      projects: getProjects(),
+      technologies: getTechnologies(),
     },
   }
 }

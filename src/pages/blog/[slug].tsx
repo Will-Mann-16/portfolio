@@ -1,11 +1,10 @@
 import { Box, Container, Heading, Stack } from '@chakra-ui/react'
 import type { GetStaticProps, InferGetStaticPropsType } from 'next'
 
+import { ContentImage } from '~/components/ContentImage'
 import { Layout } from '~/components/Layout'
-import { PortableText } from '~/components/PortableText'
-import { SanityImage } from '~/components/SanityImage'
-import { BlogPost, getBlogPost, postSlugsQuery } from '~/lib/blogPost.queries'
-import { getClient } from '~/lib/sanity.client'
+import { MarkdownBody } from '~/components/MarkdownBody'
+import { BlogPost, getBlogPost, getPostSlugs } from '~/lib/blogPost.queries'
 import { formatDate } from '~/utils'
 
 import bg from '../../assets/bg.svg'
@@ -18,8 +17,7 @@ export const getStaticProps: GetStaticProps<
   { blogPost: BlogPost },
   Query
 > = async ({ params = {} }) => {
-  const client = getClient()
-  const blogPost = await getBlogPost(client, params.slug)
+  const blogPost = getBlogPost(params.slug)
 
   if (!blogPost) {
     return {
@@ -34,7 +32,7 @@ export const getStaticProps: GetStaticProps<
   }
 }
 
-export default function BlogPost({
+export default function BlogPostPage({
   blogPost,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
@@ -64,20 +62,21 @@ export default function BlogPost({
               rounded="md"
               overflow="hidden"
             >
-              <SanityImage
-                image={blogPost.mainImage}
+              <ContentImage
+                src={blogPost.mainImage.src}
                 alt={blogPost.title}
                 fill
+                style={{ objectFit: 'contain' }}
               />
             </Box>
             <Heading as="h1" fontSize="4xl" color="brand.100">
               {blogPost.title}
             </Heading>
             <Heading as="h2" fontSize="xl" color="brand.200">
-              {formatDate(blogPost._createdAt)}
+              {formatDate(blogPost.date)}
             </Heading>
             <Stack color="brand.100">
-              <PortableText value={blogPost.body} />
+              <MarkdownBody markdown={blogPost.body} />
             </Stack>
           </Stack>
         </Container>
@@ -87,11 +86,10 @@ export default function BlogPost({
 }
 
 export const getStaticPaths = async () => {
-  const client = getClient()
-  const slugs = await client.fetch(postSlugsQuery)
+  const slugs = getPostSlugs()
 
   return {
-    paths: slugs?.map(({ slug }) => `/blog/${slug}`) || [],
+    paths: slugs.map((slug) => `/blog/${slug}`),
     fallback: 'blocking',
   }
 }

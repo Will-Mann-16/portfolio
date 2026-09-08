@@ -1,56 +1,50 @@
-import type { PortableTextBlock } from '@portabletext/types'
-import type { ImageAsset, Slug } from '@sanity/types'
-import groq from 'groq'
-import { type SanityClient } from 'next-sanity'
-
-import { SanityImageType } from './sanity.image'
-
-export const blogPostsQuery = groq`*[_type == "blogPost" && defined(slug.current)] | order(_createdAt desc) {
-    ...,
-    mainImage {
-        ...,
-        asset-> {
-          ...,
-          metadata
-        }
-    }
-}`
-
-export async function getBlogPosts(client: SanityClient): Promise<BlogPost[]> {
-  return await client.fetch(blogPostsQuery)
-}
-
-export const blogPostBySlugQuery = groq`*[_type == "blogPost" && slug.current == $slug][0] {
-    ...,
-    mainImage {
-        ...,
-        asset-> {
-          ...,
-          metadata
-        }
-    }
-}`
-
-export async function getBlogPost(
-  client: SanityClient,
-  slug: string
-): Promise<BlogPost> {
-  return await client.fetch(blogPostBySlugQuery, {
-    slug,
-  })
-}
-
-export const postSlugsQuery = groq`
-*[_type == "blogPost" && defined(slug.current)][].slug.current
-`
+import { listContentFiles, readContentFile } from '~/lib/contentDir'
+import { ContentImage, publicImage } from '~/lib/contentImage'
+import { parseMarkdownFile } from '~/lib/parseMarkdownFile'
 
 export interface BlogPost {
-  _type: 'post'
-  _id: string
-  _createdAt: string
-  title?: string
-  slug: Slug
-  excerpt?: string
-  mainImage?: SanityImageType
-  body: PortableTextBlock[]
+  slug: string
+  title: string
+  date: string
+  excerpt: string
+  body: string
+  mainImage: ContentImage
+}
+
+function loadPost(slug: string): BlogPost {
+  const parsed = parseMarkdownFile(readContentFile('blog', `${slug}.md`))
+  return {
+    slug,
+    title: parsed.data.title,
+    date: String(parsed.data.date),
+    excerpt: parsed.data.excerpt,
+    body: parsed.content.trim(),
+    mainImage: publicImage(`blog/${slug}/main.png`),
+  }
+}
+
+export function getPostSlugs(): string[] {
+  return listContentFiles('blog', '.md').map((name) => name.replace(/\.md$/, ''))
+}
+
+export function getBlogPosts(): BlogPost[] {
+  return getPostSlugs()
+    .map(loadPost)
+    .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
+}
+
+export function getBlogPost(slug: string): BlogPost | null {
+  try {
+    return loadPost(slug)
+  } catch (err) {
+    if (
+      typeof err === 'object' &&
+      err !== null &&
+      'code' in err &&
+      (err as { code: string }).code === 'ENOENT'
+    ) {
+      return null
+    }
+    throw err
+  }
 }
